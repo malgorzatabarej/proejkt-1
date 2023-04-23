@@ -14,3 +14,6 @@ print(x)
 y = 16+20
 print(y)
 
+zk=8*8
+print(zk)
+
