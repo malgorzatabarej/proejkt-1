@@ -56,5 +56,25 @@ class Transformacje:
             return(f,l,h)
         else:
             raise NotImplementedError("nieobsługiwana elipsoida")
-        
+    
+        """
+        Definicja Np
+        """
+        def Np(self,f):
+            N=self.a/np.sqrt(1-self.ep2*np.sin(f)**2)
+            return(N)
+
+        """
+        Transformacja współrzędnych elipsoidalnych fi, lambda, h na współrzędne XYZ
+        """
+        def flh2XYZ(self,f,l,h):
+            while True:
+                N=self.Np(f,self.a,self.ep2)
+                X=(N+h)*np.cos(f)*np.cos(l)
+                Xp=X
+                Y=(N+h)*np.cos(f)*np.sin(l)
+                Z=(N*(1-self.ep2)+h)*np.sin(f)
+                if abs(Xp-X)<(0.000001/206265):
+                    break
+            return(X,Y,Z)
     
