@@ -11,5 +11,6 @@ from math import *
 x = 2+2
 print(x)
 
-
+y = 16+20
+print(y)
 
