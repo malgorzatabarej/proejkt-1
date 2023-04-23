@@ -11,6 +11,10 @@ from math import *
 x = 2+2
 print(x)
 
+a=8
+b=5
+print(a+b)
+
 
 
 
