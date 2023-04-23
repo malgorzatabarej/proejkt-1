@@ -10,7 +10,7 @@ from math import *
 
 x = 2+2
 print(x)
-
+"próba"
 
 
 
