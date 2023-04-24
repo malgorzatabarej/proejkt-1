@@ -90,5 +90,5 @@ class Transformacje:
             u = s * cos(z)
         return(n, e, u)
             
-
+print('komentarz')
         
