@@ -90,6 +90,9 @@ class Transformacje:
             u = s * cos(z)
         return(n, e, u)
 
+        """
+        Tranformacja współrzędnych fi, lambda do układu 2000
+        """
         
         def sigma(self, f, a, ep2):
             A0 = 1 - ep2/4 - 3 * ep2**2/64 - 5 * ep2**3/256
