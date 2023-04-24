@@ -8,6 +8,8 @@ import math
 import numpy as np 
 from math import *
 
+o = object()
+
 class Transformacje:
        
     def __init__(self, model: str = "WGS84"):
@@ -35,22 +37,25 @@ class Transformacje:
     """
     def XYZ2flh(self, X, Y, Z, output = "dms"):
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
-        p = np.sqrt(X**2+Y**2)
-        f = np.arctan(Z/(p*(1-self.ep2)))
-        while True:
-            N = self.a / np.sqrt(1 - self.ep2 * sin(p)**2 )
-            h=(p/np.cos(f))-N
-            fp=f
-            f=np.arctan(Z/(p*(1-self.ep2*N/(N+h))))
-            if abs(fp-f)<(0.000001/206265):
-                break
-        l=np.arctan2(Y,X)
-        if output == "dms":
-            f = self.dms(f)
-            l = self.dms(l)
-            return(f,l,h)
+        r   = sqrt(X**2 + Y**2)           # promień
+        lat_prev = atan(Z / (r * (1 - self.ep2)))    # pierwsze przybliilizenie
+        lat = 0
+        while abs(lat_prev - lat) > 0.000001/206265:    
+            lat_prev = lat
+            N = self.a / sqrt(1 - self.ep2 * sin(lat_prev)**2)
+            h = r / cos(lat_prev) - N
+            lat = atan((Z/r) * (((1 - self.ep2 * N/(N + h))**(-1))))
+        lon = atan(Y/X)
+        N = self.a / sqrt(1 - self.ep2 * (sin(lat))**2);
+        h = r / cos(lat) - N       
+        if output == "dec_degree":
+            return degrees(lat), degrees(lon), h 
+        elif output == "dms":
+            lat = self.dms(degrees(lat))
+            lon = self.dms(degrees(lon))
+            return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
         else:
-            raise NotImplementedError("nieobsługiwana elipsoida")
+            raise NotImplementedError ("nieobsługiwana elipsoida")
     
         """
         Definicja Np
@@ -130,10 +135,10 @@ class Transformacje:
         return(X2000, Y2000)
     
 if __name__=="__main__":
-    model=Transformacje(model='WGS84')
+    geo = Transformacje(model='WGS84')
     X=54834834 
     Y=75327244 
     Z=464269264
-    f,l,h=model.XYZ2flh(X,Y,Z)
+    f,l,h= geo.XYZ2flh(X,Y,Z)
     print(f,l,h)
     
