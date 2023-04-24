@@ -90,5 +90,46 @@ class Transformacje:
             u = s * cos(z)
         return(n, e, u)
             
-
+        """ 
+        Transformacja fi, lambda do układu 2000
+        """
         
+        def sigma(self, f, a, ep2):
+            A0 = 1 - ep2/4 - 3 * ep2**2/64 - 5 * ep2**3/256
+            A2 = (3/8) * (ep2 + ep2**2/4 + 15 * ep2**3/128)
+            A4 = (15/256) * (ep2**2 + 3 * ep2**3/4)
+            A6 = 35 * ep2**3/3072
+            sig = a * (A0 * f - A2 * np.sin(2 * f) + A4 * np.sin(4 * f) - A6 * np.sin(6 * f))
+            return(sig)
+        
+        def GK2000(self, f, l, a, ep2):
+            m=0.999923
+            l0 = 0 
+            strefa = 0
+            if l >np.deg2rad(13.5) and l < np.deg2rad(16.5):
+                strefa = 5
+                la0 = np.deg2rad(15)
+            elif l >np.deg2rad(16.5) and l < np.deg2rad(19.5):
+                strefa = 6
+                l0 = np.deg2rad(18)
+            elif l >np.deg2rad(19.5) and l < np.deg2rad(22.5):
+                strefa =7
+                l0 = np.deg2rad(21)
+            elif l >np.deg2rad(22.5) and l < np.deg2rad(25.5):
+                strefa = 8
+                l0 = np.deg2rad(24)
+            else:
+                return("Punkt poza strefami odwzorowawczymi układu PL-2000")        
+    
+        b2 = (a**2) * (1-e2)   #krotsza polos
+        e2p = ( a**2 - b2 ) / b2   #drugi mimosrod elipsy
+        dl = l - l0
+        t = np.tan(f)
+        ni = np.sqrt(e2p * (np.cos(f))**2)
+        N = self.Np(f, a, ep2)
+        sigma = self.sigma(f, a, ep2)
+        XGK20 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+        YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+        X2000 = XGK20 * m 
+        Y2000 = YGK20 * m + strefa*1000000 + 500000
+        return(X2000, Y2000)
