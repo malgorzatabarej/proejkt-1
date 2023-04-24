@@ -77,4 +77,18 @@ class Transformacje:
                 if abs(Xp-X)<(0.000001/206265):
                     break
             return(X,Y,Z)
-    
+        
+        """
+        Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych
+        """
+        
+        def saz2neu(self, s,alfa,z):
+            alfa = deg2rad(alfa)
+            z = deg2rad(z)
+            n = s * sin(z) * cos(alfa)
+            e = s * sin(z) * sin(alfa)
+            u = s * cos(z)
+        return(n, e, u)
+            
+
+        
