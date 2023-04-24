@@ -24,16 +24,11 @@ class Transformacje:
         self.ep2 = (2 * self.flat - self.flat ** 2)
         
     """Konwersja stopni na stopnie, minuty, sekundy"""
-    def dms(x):     
-        znak = ' '
-        if x<0:
-            znak = '-'
-            x = abs(x)
-        x = x * 180/np.pi
-        d = int(x)
-        m = int((x - d) * 60)
-        s = (x - d - m / 60) * 3600
-        return(znak, "%3d %2d %7.5f" %(d, m, s))
+    def dms(x):
+        degrees=int(x)
+        minutes=int((x-degrees)*60)
+        seconds=((x-degrees)*60-minutes)*60
+        return(degrees, minutes, seconds)
         
     """
     Tranformacja współrzędnych geocentrycznych XYZ na współrzędne elipsoidalne fi, lambda, h
@@ -46,13 +41,13 @@ class Transformacje:
             N = self.a / np.sqrt(1 - self.ep2 * sin(p)**2 )
             h=(p/np.cos(f))-N
             fp=f
-            f=np.arctan(Z/(p*(1-e2*N/(N+h))))
+            f=np.arctan(Z/(p*(1-self.ep2*N/(N+h))))
             if abs(fp-f)<(0.000001/206265):
                 break
         l=np.arctan2(Y,X)
         if output == "dms":
-            f = self.dms(degrees(f))
-            l = self.dms(degrees(l))
+            f = self.dms(f)
+            l = self.dms(l)
             return(f,l,h)
         else:
             raise NotImplementedError("nieobsługiwana elipsoida")
@@ -60,8 +55,8 @@ class Transformacje:
         """
         Definicja Np
         """
-        def Np(self,f):
-            N=self.a/np.sqrt(1-self.ep2*np.sin(f)**2)
+        def Np(self,f,a, ep2):
+            N=a/np.sqrt(1-ep2*np.sin(f)**2)
             return(N)
 
         """
@@ -133,3 +128,12 @@ class Transformacje:
         X2000 = XGK20 * m 
         Y2000 = YGK20 * m + strefa*1000000 + 500000
         return(X2000, Y2000)
+    
+if __name__=="__main__":
+    model=Transformacje(model='WGS84')
+    X=54834834 
+    Y=75327244 
+    Z=464269264
+    f,l,h=model.XYZ2flh(X,Y,Z)
+    print(f,l,h)
+    
