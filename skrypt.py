@@ -28,7 +28,7 @@ class Transformacje:
     """
     Tranformacja współrzędnych geocentrycznych XYZ na współrzędne elipsoidalne fi, lambda, h
     """
-    def XYZ2flh(self, X, Y, Z, output = "dms"):
+    def XYZ2flh(self, X, Y, Z, output = "dec_degree"):
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
         r   = sqrt(X**2 + Y**2)           # promień
         lat_prev = atan(Z / (r * (1 - self.ep2)))    # pierwsze przybliilizenie
@@ -44,8 +44,8 @@ class Transformacje:
         if output == "dec_degree":
             return degrees(lat), degrees(lon), h 
         elif output == "dms":
-            lat = self.dms(degrees(lat))
-            lon = self.dms(degrees(lon))
+            lat = self.deg2dms(degrees(lat))
+            lon = self.deg2dms(degrees(lon))
             return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
         else:
             raise NotImplementedError ("nieobsługiwana elipsoida")
