@@ -7,11 +7,11 @@ Created on Sun Apr 23 21:11:54 2023
 import math
 import numpy as np 
 from math import *
+import argparse 
 
 o = object()
 
 class Transformacje:
-       
     def __init__(self, model: str = "WGS84"):
         if model == "WGS84":
             self.a = 6378137.000
@@ -33,7 +33,7 @@ class Transformacje:
     """
     def XYZ2flh(self, X, Y, Z, output = "dec_degree"):
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
-        r   = sqrt(X**2 + Y**2)           # promień
+        r   = np.sqrt(X**2 + Y**2)           # promień
         lat_prev = atan(Z / (r * (1 - self.ep2)))    # pierwsze przybliilizenie
         lat = 0
         while abs(lat_prev - lat) > 0.000001/206265:    
@@ -185,13 +185,22 @@ class Transformacje:
         x92 = xgk*m - 5300000
         y92 = ygk*m + 500000
         
-        return(x92, y92)
+        return(x92, y92)    
+if __name__ == "__main__":
+    # Tworzenie parsera argumentów
     
-if __name__=="__main__":
-    geo = Transformacje(model='WGS84')
-    X=54834834 
-    Y=75327244 
-    Z=464269264
-    f,l,h= geo.XYZ2flh(X,Y,Z)
-    print(f,l,h)
-    
+    parser = argparse.ArgumentParser(description="Przykładowy program z użyciem argparse")
+    parser.add_argument("--model", type=str, default="WGS84", choices=["WGS84", "GRS80", "Krasowski"],
+                        help="Model elipsoidy (domyślnie: WGS84)")
+    parser.add_argument("--X", type=float, help="Wartość X")
+    parser.add_argument("--Y", type=float, help="Wartość Y")
+    parser.add_argument("--Z", type=float, help="Wartość Z")
+    parser.add_argument("--output", type=str, default="dec_degree", choices=["dec_degree", "dms"],
+                        help="Format wyników (domyślnie: dec_degree)")
+    args = parser.parse_args()
+
+    # Tworzenie instancji klasy Transformacje na podstawie podanych argumentów
+    transformacje = Transformacje(args.model)
+
+    # Wywołanie odpowiednich funkcji na podstawie przekazanych argumentów
+    wynik = transformacje.XYZ2flh(args.X, args.Y, args.Z, args.output)
