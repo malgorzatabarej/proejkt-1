@@ -163,20 +163,24 @@ class Transformacje:
         Y2000 = YGK20 * m + strefa*1000000 + 500000
         return(X2000, Y2000)
     
+    """
+    Tranformacja współrzędnych fi, lambda do układu 1992
+    """
+    
     def GK1992(self, f, l, a , ep2):
         lam0 = (19*np.pi)/180
         m = 0.9993
-        b2 = (a**2) * (1-e2)   #krotsza polos
+        b2 = (a**2) * (1-ep2)   #krotsza polos
         e2p = ( a**2 - b2 ) / b2   #drugi mimosrod elipsy
-        dlam = lam - lam0
-        t = np.tan(fi)
-        ni = np.sqrt(e2p * (np.cos(fi))**2)
-        N = Np(fi, a, e2)
+        dlam = l - lam0
+        t = np.tan(f)
+        ni = np.sqrt(e2p * (np.cos(f))**2)
+        N = Np(f, a, ep2)
 
-        sigma = Sigma(fi, a, e2)
+        sigma = Sigma(f, a, ep2)
 
-        xgk = sigma + ((dlam**2)/2)*N*np.sin(fi)*np.cos(fi) * ( 1+ ((dlam**2)/12)*(np.cos(fi))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(fi)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
-        ygk = (dlam*N* np.cos(fi)) * (1+(((dlam)**2/6)*(np.cos(fi))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(fi)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+        xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+        ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
         
         x92 = xgk*m - 5300000
         y92 = ygk*m + 500000
