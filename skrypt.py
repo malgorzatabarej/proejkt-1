@@ -19,6 +19,9 @@ class Transformacje:
         elif model == "GRS80":
             self.a = 6378137.0
             self.b = 6356752.31414036
+        elif model == "Krasowski":
+            self.a = 6378245.0
+            self.b = 6356752.314245
         else:
             raise NotImplementedError("nieobsługiwana elipsoida")
         self.flat = (self.a - self.b)/self.a
@@ -82,6 +85,39 @@ class Transformacje:
             e = s * sin(z) * sin(alfa)
             u = s * cos(z)
         return(n, e, u)
+    
+        def kat_elew(self, fa, la, ha, fb, lb, hb):
+            Na = self.a/sqrt(1-self.ep2*sin(fa)**2)
+            Ra = array([(Na+ha)*cos(fa)*cos(la),
+                         (Na+ha)*cos(fa)*sin(la), 
+                         (Na*(1-self.ep2)+ha)*sin(fa)])
+       
+            Nb = self.a/sqrt(1-self.ep2*sin(fb)**2)
+            Rb = array([(Nb+hb)*cos(fb)*cos(lb),
+                         (Nb+hb)*cos(fb)*sin(lb),
+                         (Nb*(1-self.ep2)+hb)*sin(fb)])
+       
+            R_delta = R_b - R_a
+            R_dlugosc  = linalg.norm(R_delta, 2)
+       
+            R = R_delta / R_dlugosc
+       
+            n  =array([-1 * sin(fa)*cos(la),
+                       -1 * sin(fa)*sin(la),
+                       cos(fa)])
+       
+            e  =array([-1 * sin(la),
+                     cos(la),
+                     0]) 
+       
+            u  =array([cos(fa)*cos(la),
+                       cos(fa)*sin(la),
+                       sin(fa)])
+       
+            cos_z = float(dot(u, R))
+            zenith = arccos(cos_z)
+       
+            return(n, e, u, zenith)
 
         """
         Tranformacja współrzędnych fi, lambda do układu 2000
