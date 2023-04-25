@@ -192,15 +192,31 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Przykładowy program z użyciem argparse")
     parser.add_argument("--model", type=str, default="WGS84", choices=["WGS84", "GRS80", "Krasowski"],
                         help="Model elipsoidy (domyślnie: WGS84)")
-    parser.add_argument("--X", type=float, help="Wartość X")
-    parser.add_argument("--Y", type=float, help="Wartość Y")
-    parser.add_argument("--Z", type=float, help="Wartość Z")
+    parser.add_argument("--Plik", type=str, help="Wartość X")
+    parser.add_argument("--Elipsoida", type=str, help="Wartość Y")
+    parser.add_argument("--Transformacja", type=str, help="Wartość Z")
     parser.add_argument("--output", type=str, default="dec_degree", choices=["dec_degree", "dms"],
                         help="Format wyników (domyślnie: dec_degree)")
     args = parser.parse_args()
-
-    # Tworzenie instancji klasy Transformacje na podstawie podanych argumentów
-    transformacje = Transformacje(args.model)
-
-    # Wywołanie odpowiednich funkcji na podstawie przekazanych argumentów
-    wynik = transformacje.XYZ2flh(args.X, args.Y, args.Z, args.output)
+    elipsoidy = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'KRASOWSKI':[6378245.000, 0.00669342162296]}
+    transformacje = {'XYZ2BLH': 'XYZ2BLH','BLH2XYZ': 'BLH2XYZ','PL2000':'PL2000','PL1992':'PL1992', 'XYZ2NEUP':'XYZ2NEUP'}
+    
+    wybor = "TAK"
+    try:
+        while wybor =="TAK":
+            if args.Elipsoida==None:
+                args.Elipsoida = input(str('Podaj nazwe elipsoidy: '))
+            if args.Plik==None:
+                args.Plik = input(str('Wklej sciezke do pliku txt z danymi: '))
+            if args.Transformacje==None:
+                args.Transformacje = input(str('Jaka transformacje wykonac?: '))
+                    
+                obiekt = Transformacje(elipsoidy[args.Elipsoida.upper()])
+            dane = obiekt.odczyt(args.p, transformacje[args.t.upper()])
+                
+            print('Plik wynikowy zostal utworzony.')
+                
+            wybor = input(str("Jezeli chcesz wykonac kolejna transformacje wpisz TAK jesli chcesz zakonczyc ENTER: ")).upper()
+            args.Plik = None
+            args.Elipsoida= None
+            args.Transformacja = None
