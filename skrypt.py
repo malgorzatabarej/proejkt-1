@@ -7,7 +7,7 @@ Created on Sun Apr 23 21:11:54 2023
 import math
 import numpy as np 
 from math import *
-import argparse
+from argparse import ArgumentParser
 
 o = object()
 
@@ -188,22 +188,28 @@ class Transformacje:
             NEU = self.XYZ2NEU(dane[])"""
 
                                
-"""if __name__ == "__main__":
-    # Tworzenie parsera argumentów
+if __name__=='__main__':
+    parser=ArgumentParser()
+    parser.add_argument("--Plik", type=str, help="Wpisz sciezke do pliku z danymi wejsciowymi")
+    parser.add_argument("--Elipsoida", type=str, help="Wybierz elipsoide sposrod dostepnych: WRS84, GRS80, KRASOWSKI")
+    parser.add_argument("--Transformacja", type=str, help="Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, saz2neu, GK2000, GK1992")
+    args=parser.parse_args()
     
-    parser = argparse.ArgumentParser(description="Przykładowy program z użyciem argparse")
-    parser.add_argument("--model", type=str, default="WGS84", choices=["WGS84", "GRS80", "Krasowski"],
-                        help="Model elipsoidy (domyślnie: WGS84)")
-    parser.add_argument("--Plik", type=str, help="Wartość X")
-    parser.add_argument("--Elipsoida", type=str, help="Wartość Y")
-    parser.add_argument("--Transformacja", type=str, help="Wartość Z")
-    parser.add_argument("--output", type=str, default="dec_degree", choices=["dec_degree", "dms"],
-                        help="Format wyników (domyślnie: dec_degree)")
-    args = parser.parse_args()
-    elipsoidy = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'KRASOWSKI':[6378245.000, 0.00669342162296]}
-    transformacje = {'XYZ2BLH': 'XYZ2BLH','BLH2XYZ': 'BLH2XYZ','PL2000':'PL2000','PL1992':'PL1992', 'XYZ2NEUP':'XYZ2NEUP'}
+    Elipsoidy={"WGS84":[6378137.000, 6356752.31424518], "GRS80":[6378137.0, 6356752.31414036], "KRASOWSKI":[6378245.0, 6356752.314245]}
+    Transformacje={"XYZ2flh":"XYZ2flh", "flh2XYZ":"flh2XYZ", "saz2neu":"saz2neu", "GK2000":"GK2000", "GK1992":"GK1992"}
     
-    wybor = input(str("Jezeli chcesz wykonac kolejna transformacje wpisz TAK jesli chcesz zakonczyc ENTER: ")).upper()
-    args.Elipsoida = None
-    args.Plik= None
-    args.Transformacja= None"""
+    try:
+        wsp=Transformacje(Elipsoidy[args.Elipsoida.upper()])
+        wczyt=wsp.plik(args.file, Transformacje[args.Transformacja.upper()])
+        print("Utworzono plik ze wspolrzednymi")
+        
+    except FileNotFoundError:
+        print("Nie znaleziono podanego pliku")
+    except KeyError:
+        print("Niepoprawna nazwa Elipsoidy lub Transformacji")
+    except IndexError:
+        print("Dane w podanym pliku sa w nieodpowiednim formacie")
+    except ValueError:
+        print("Dane w podanym pliku sa w nieodpowiednim formacie")
+    finally:
+        print("Mamy nadzieję, że nasz program był dla Ciebie użyteczny")
