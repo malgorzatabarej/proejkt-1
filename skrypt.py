@@ -7,12 +7,12 @@ Created on Sun Apr 23 21:11:54 2023
 import math
 import numpy as np 
 from math import *
-import argparse 
+import argparse
 
 o = object()
 
 class Transformacje:
-    def __init__(self, model: str = "WGS84"):
+    def __init__(self, model):
         if model == "WGS84":
             self.a = 6378137.000
             self.b = 6356752.31424518
@@ -31,7 +31,9 @@ class Transformacje:
     """
     Tranformacja współrzędnych geocentrycznych XYZ na współrzędne elipsoidalne fi, lambda, h
     """
+    
     def XYZ2flh(self, X, Y, Z, output = "dec_degree"):
+        FLH = []
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
         r   = np.sqrt(X**2 + Y**2)           # promień
         lat_prev = atan(Z / (r * (1 - self.ep2)))    # pierwsze przybliilizenie
@@ -45,7 +47,7 @@ class Transformacje:
         N = self.a / sqrt(1 - self.ep2 * (sin(lat))**2);
         h = r / cos(lat) - N       
         if output == "dec_degree":
-            return degrees(lat), degrees(lon), h 
+            return FLH.append([degrees(lat), degrees(lon), h])
         elif output == "dms":
             lat = self.deg2dms(degrees(lat))
             lon = self.deg2dms(degrees(lon))
@@ -64,6 +66,7 @@ class Transformacje:
         Transformacja współrzędnych elipsoidalnych fi, lambda, h na współrzędne XYZ
         """
         def flh2XYZ(self,f,l,h):
+            XYZ = []
             while True:
                 N=self.Np(f,self.a,self.ep2)
                 X=(N+h)*np.cos(f)*np.cos(l)
@@ -72,7 +75,7 @@ class Transformacje:
                 Z=(N*(1-self.ep2)+h)*np.sin(f)
                 if abs(Xp-X)<(0.000001/206265):
                     break
-            return(X,Y,Z)
+            return XYZ.append([X, Y, Z])
         
         """
         Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych
@@ -186,6 +189,13 @@ class Transformacje:
         y92 = ygk*m + 500000
         
         return(x92, y92)    
+    
+    def odczyt(self,plik_wsadowy, transformacja):
+        dane = np.genfromtxt(plik_wsadowy,delimiter = " ")
+        if transformacja == 'XYZ2BLH':
+            FLH = self.hirvonen(dane[:,0], dane[:,1], dane[:,2])
+            np.savetxt(f"plik_wynikowy_{transformacja}_{args.el}.txt", wyniki, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+        
 if __name__ == "__main__":
     # Tworzenie parsera argumentów
     
@@ -201,22 +211,7 @@ if __name__ == "__main__":
     elipsoidy = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'KRASOWSKI':[6378245.000, 0.00669342162296]}
     transformacje = {'XYZ2BLH': 'XYZ2BLH','BLH2XYZ': 'BLH2XYZ','PL2000':'PL2000','PL1992':'PL1992', 'XYZ2NEUP':'XYZ2NEUP'}
     
-    wybor = "TAK"
-    try:
-        while wybor =="TAK":
-            if args.Elipsoida==None:
-                args.Elipsoida = input(str('Podaj nazwe elipsoidy: '))
-            if args.Plik==None:
-                args.Plik = input(str('Wklej sciezke do pliku txt z danymi: '))
-            if args.Transformacje==None:
-                args.Transformacje = input(str('Jaka transformacje wykonac?: '))
-                    
-                obiekt = Transformacje(elipsoidy[args.Elipsoida.upper()])
-            dane = obiekt.odczyt(args.p, transformacje[args.t.upper()])
-                
-            print('Plik wynikowy zostal utworzony.')
-                
-            wybor = input(str("Jezeli chcesz wykonac kolejna transformacje wpisz TAK jesli chcesz zakonczyc ENTER: ")).upper()
-            args.Plik = None
-            args.Elipsoida= None
-            args.Transformacja = None
+    wybor = input(str("Jezeli chcesz wykonac kolejna transformacje wpisz TAK jesli chcesz zakonczyc ENTER: ")).upper()
+    args.Elipsoida = None
+    args.Plik= None
+    args.Transformacja= None
