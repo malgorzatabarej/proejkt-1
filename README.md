@@ -25,7 +25,24 @@ BL do PL2000
 BL do PL1992
 ```
 
-**OPIS DZIAŁANIA PROGRAMU**
+## OPIS DZIAŁANIA PROGRAMU
+Program wymaga podania przez użytkownika danych, przypisanych do następujących flag:
+```
+*-Plik* wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
+*-Elipsoida* wymaga podania konkretnej elipsoidy
+*-Transformacja* wymaga podania nazwy transformacji, z której użytkownik chce skorzystać
+```
+**obsługiwane przez program transformacje oraz elipsoidy podane są powyżej**
+
+```
+**Przykładowe polecenie wykonane CMD:**
+sciezka -Plik costam -Elipsoida GRS80 -Transformacja XYZ2flh
+```
+
+
+
+
+
 
 
 
