@@ -75,7 +75,8 @@ class Transformacje:
                 Z=(N*(1-self.ep2)+h)*np.sin(f)
                 if abs(Xp-X)<(0.000001/206265):
                     break
-            return XYZ.append([X, Y, Z])
+                XYZ.append([X, Y, Z])
+            return XYZ
         
         """
         Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych
