@@ -34,20 +34,23 @@ class Transformacje:
     
     def XYZ2flh(self, X, Y, Z, output = "dec_degree"):
         FLH = []
+        
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
+        
         r   = np.sqrt(X**2 + Y**2)           # promień
-        lat_prev = atan(Z / (r * (1 - self.ep2)))    # pierwsze przybliilizenie
-        lat = 0
-        while abs(lat_prev - lat) > 0.000001/206265:    
-            lat_prev = lat
-            N = self.a / sqrt(1 - self.ep2 * sin(lat_prev)**2)
-            h = r / cos(lat_prev) - N
+        Fi = atan(Z / (r * (1 - self.ep2)))    # pierwsze przybliilizenie
+        fi = 0
+        while abs(Fi - fi) > 0.000001/206265:    
+            Fi = fi
+            N = self.a / sqrt(1 - self.ep2 * sin(Fi)**2)
+            h = r / cos(Fi) - N
             lat = atan((Z/r) * (((1 - self.ep2 * N/(N + h))**(-1))))
-        lon = atan(Y/X)
-        N = self.a / sqrt(1 - self.ep2 * (sin(lat))**2);
-        h = r / cos(lat) - N       
+        lam = atan(Y/X)
+        N = self.a / sqrt(1 - self.ep2 * (sin(fi))**2);
+        h = r / cos(fi) - N  
+        FLH.append([degrees(Fi), degrees(lam), h])
         if output == "dec_degree":
-            return FLH.append([degrees(lat), degrees(lon), h])
+            return FLH
         elif output == "dms":
             lat = self.deg2dms(degrees(lat))
             lon = self.deg2dms(degrees(lon))
@@ -58,8 +61,9 @@ class Transformacje:
         """
         Definicja Np
         """
-        def Np(self,f,a, ep2):
-            N=a/np.sqrt(1-ep2*np.sin(f)**2)
+        
+        def Np(self,f):
+            N=self.a/np.sqrt(1-self.ep2*np.sin(f)**2)
             return(N)
 
         """
@@ -68,9 +72,8 @@ class Transformacje:
         def flh2XYZ(self,f,l,h):
             XYZ = []
             while True:
-                N=self.Np(f,self.a,self.ep2)
+                N=self.Np(f)
                 X=(N+h)*np.cos(f)*np.cos(l)
-                Xp=X
                 Y=(N+h)*np.cos(f)*np.sin(l)
                 Z=(N*(1-self.ep2)+h)*np.sin(f)
                 if abs(Xp-X)<(0.000001/206265):
@@ -81,47 +84,24 @@ class Transformacje:
         """
         Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych
         """
+        def Rneu(f,l):
+            R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
+                          [-np.sin(f)*np.sin(l), np.cos(l), np.cos(f)*np.sin(l)],
+                          [np.cos(f), 0., np.sin(f)]])
+            return(R)
         
-        def saz2neu(self, s,alfa,z):
-            alfa = deg2rad(alfa)
-            z = deg2rad(z)
-            n = s * sin(z) * cos(alfa)
-            e = s * sin(z) * sin(alfa)
-            u = s * cos(z)
-        return(n, e, u)
     
-        def kat_elew(self, fa, la, ha, fb, lb, hb):
-            Na = self.a/sqrt(1-self.ep2*sin(fa)**2)
-            Ra = array([(Na+ha)*cos(fa)*cos(la),
-                         (Na+ha)*cos(fa)*sin(la), 
-                         (Na*(1-self.ep2)+ha)*sin(fa)])
-       
-            Nb = self.a/sqrt(1-self.ep2*sin(fb)**2)
-            Rb = array([(Nb+hb)*cos(fb)*cos(lb),
-                         (Nb+hb)*cos(fb)*sin(lb),
-                         (Nb*(1-self.ep2)+hb)*sin(fb)])
-       
-            R_delta = R_b - R_a
-            R_dlugosc  = linalg.norm(R_delta, 2)
-       
-            R = R_delta / R_dlugosc
-       
-            n  =array([-1 * sin(fa)*cos(la),
-                       -1 * sin(fa)*sin(la),
-                       cos(fa)])
-       
-            e  =array([-1 * sin(la),
-                     cos(la),
-                     0]) 
-       
-            u  =array([cos(fa)*cos(la),
-                       cos(fa)*sin(la),
-                       sin(fa)])
-       
-            cos_z = float(dot(u, R))
-            zenith = arccos(cos_z)
-       
-            return(n, e, u, zenith)
+        def XYZ2NEU(self, X, Y, Z, X0, Y0, Z0):
+            neu = []
+            fi, lam, h = self.XYZ2flh(X, Y, Z, output = "degrees")
+            
+            Rneu = self.Rneu(f,l)
+            for X, Y, Z in zip(X, Y, Z):
+                X_sr = [X-X0, Y-Y0, Z-Z0] 
+                X_rneu = R_neu.T@X_sr
+                neu.append(X_rneu.T)
+                
+            return neu
 
         """
         Tranformacja współrzędnych fi, lambda do układu 2000
@@ -136,6 +116,7 @@ class Transformacje:
             return(sig)
         
         def GK2000(self, f, l, a, ep2):
+            XY2000 = []
             m=0.999923
             l0 = 0 
             strefa = 0
@@ -165,6 +146,7 @@ class Transformacje:
         YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
         X2000 = XGK20 * m 
         Y2000 = YGK20 * m + strefa*1000000 + 500000
+        XY2000.append([X2000, Y2000])
         return(X2000, Y2000)
     
     """
@@ -172,6 +154,7 @@ class Transformacje:
     """
     
     def GK1992(self, f, l, a , ep2):
+        XY92 = []
         lam0 = (19*np.pi)/180
         m = 0.9993
         b2 = (a**2) * (1-ep2)   #krotsza polos
@@ -179,9 +162,9 @@ class Transformacje:
         dlam = l - lam0
         t = np.tan(f)
         ni = np.sqrt(e2p * (np.cos(f))**2)
-        N = Np(f, a, ep2)
+        N = self.Np(f)
 
-        sigma = Sigma(f, a, ep2)
+        sigma = self.sigma(f, a, ep2)
 
         xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
         ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
@@ -189,15 +172,23 @@ class Transformacje:
         x92 = xgk*m - 5300000
         y92 = ygk*m + 500000
         
-        return(x92, y92)    
-    
-    def odczyt(self,plik_wsadowy, transformacja):
-        dane = np.genfromtxt(plik_wsadowy,delimiter = " ")
-        if transformacja == 'XYZ2BLH':
-            FLH = self.hirvonen(dane[:,0], dane[:,1], dane[:,2])
-            np.savetxt(f"plik_wynikowy_{transformacja}_{args.el}.txt", wyniki, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+        XY92.append([x92, y92])
         
-if __name__ == "__main__":
+        return XYZ92 
+    
+"""   def plik(self, plik_wynikowy, transf: type = str):
+        dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
+        if transf == 'XYZ2BLH':
+            FLH = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
+            np.savetxt(f"plik_wynikowy_{transformacja}_{args.el}.txt", FLH, delimiter=' ', fmt='%7.10f %7.10f %7.3f')
+        elif transf == "flh2XYZ":
+            XYZ = self.flh2XYZ(np.deg2rad(dane[:,0], np.deg2rad(dane[:,1]), dane[:,2]))
+            np.savetxt(f"plik_wynikowy_{transformacja}_{args.el}.txt", XYZ, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
+        elif transf == "XYZ2NEU":
+            NEU = self.XYZ2NEU(dane[])"""
+
+                               
+"""if __name__ == "__main__":
     # Tworzenie parsera argumentów
     
     parser = argparse.ArgumentParser(description="Przykładowy program z użyciem argparse")
@@ -215,4 +206,4 @@ if __name__ == "__main__":
     wybor = input(str("Jezeli chcesz wykonac kolejna transformacje wpisz TAK jesli chcesz zakonczyc ENTER: ")).upper()
     args.Elipsoida = None
     args.Plik= None
-    args.Transformacja= None
+    args.Transformacja= None"""
