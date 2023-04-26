@@ -174,7 +174,6 @@ class Transformacje:
         
         return transformed 
    
-
 def plik(self, plik_wynikowy, transf: str = ''):
     dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
     if transf == 'XYZ2flh':
