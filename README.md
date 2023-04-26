@@ -28,7 +28,7 @@ BL do PL1992
 ## OPIS DZIAŁANIA PROGRAMU
 Program wymaga podania przez użytkownika danych, przypisanych do następujących flag:
 ```
--Plik wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
+<strong>-Plik</strong> wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
 -Elipsoida wymaga podania konkretnej elipsoidy
 -Transformacja wymaga podania nazwy transformacji, z której użytkownik chce skorzystać
 ```
