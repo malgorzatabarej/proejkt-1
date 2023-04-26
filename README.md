@@ -39,8 +39,9 @@ Przykładowe polecenie wykonane w CMD:
 sciezka -Plik costam -Elipsoida GRS80 -Transformacja XYZ2flh
 ```
 
-Jeżeli wszystko zostało podane prawidłowo utworzy się plik tekstowy z wynikami oraz wyswietli się komunikat:
-**Utworzono plik ze wspolrzednymi.**
+Jeżeli wszystko zostało podane prawidłowo utworzy się plik tekstowy z wynikami oraz wyswietli się  następujący komunikat:
+
+**Utworzono plik ze wspołrzędnymi.**
 
 
 
