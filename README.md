@@ -1,6 +1,7 @@
 # PROJEKT 1
-## Transformacje
+## **Transformacje**
 Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
+
 Dostępne są następujące elipsoidy:
 ```
 GRS80
