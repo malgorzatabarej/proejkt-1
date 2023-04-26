@@ -3,20 +3,20 @@
 
 Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
 
-*Program wymaga:*
+**Program wymaga:**
 ```
 Phyton w jakiejs wersji
 Zaimprtowania biblioteki math, numpy oraz argparse
 ```
 
-*Dostępne są następujące elipsoidy:*
+**Dostępne są następujące elipsoidy:**
 ```
 GRS80
 WGRS84
 KRASOWSKIEGO
 ```
 
-*Dostępne są następujące transformacje:*
+**Dostępne są następujące transformacje:**
 ```
 XYZ do BLH
 BLH do XYZ
