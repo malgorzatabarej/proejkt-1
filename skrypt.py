@@ -12,7 +12,7 @@ from argparse import ArgumentParser
 o = object()
 
 class Transformacje:
-    def __init__(self, model):
+    def __init__(self, elip):
         if model == "WGS84":
             self.a = 6378137.000
             self.b = 6356752.31424518
@@ -27,13 +27,12 @@ class Transformacje:
         self.flat = (self.a - self.b)/self.a
         self.e2 = sqrt(2 * self.flat - self.flat ** 2)
         self.ep2 = (2 * self.flat - self.flat ** 2)
-        
     """
     Tranformacja współrzędnych geocentrycznych XYZ na współrzędne elipsoidalne fi, lambda, h
     """
     
     def XYZ2flh(self, X, Y, Z, output = "dec_degree"):
-        FLH = []
+        transformed = []
         
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
         
@@ -48,9 +47,9 @@ class Transformacje:
         lam = atan(Y/X)
         N = self.a / sqrt(1 - self.ep2 * (sin(fi))**2);
         h = r / cos(fi) - N  
-        FLH.append([degrees(Fi), degrees(lam), h])
+        transformed.append([degrees(Fi), degrees(lam), h])
         if output == "dec_degree":
-            return FLH
+            return transformed
         elif output == "dms":
             lat = self.deg2dms(degrees(lat))
             lon = self.deg2dms(degrees(lon))
@@ -70,7 +69,7 @@ class Transformacje:
         Transformacja współrzędnych elipsoidalnych fi, lambda, h na współrzędne XYZ
         """
         def flh2XYZ(self,f,l,h):
-            XYZ = []
+            transformed = []
             while True:
                 N=self.Np(f)
                 X=(N+h)*np.cos(f)*np.cos(l)
@@ -78,8 +77,8 @@ class Transformacje:
                 Z=(N*(1-self.ep2)+h)*np.sin(f)
                 if abs(Xp-X)<(0.000001/206265):
                     break
-                XYZ.append([X, Y, Z])
-            return XYZ
+                transformed.append([X, Y, Z])
+            return transformed
         
         """
         Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych
@@ -92,16 +91,16 @@ class Transformacje:
         
     
         def XYZ2NEU(self, X, Y, Z, X0, Y0, Z0):
-            neu = []
+            transformed = []
             fi, lam, h = self.XYZ2flh(X, Y, Z, output = "degrees")
             
             Rneu = self.Rneu(f,l)
             for X, Y, Z in zip(X, Y, Z):
                 X_sr = [X-X0, Y-Y0, Z-Z0] 
                 X_rneu = R_neu.T@X_sr
-                neu.append(X_rneu.T)
+                transformed.append(X_rneu.T)
                 
-            return neu
+            return transformed
 
         """
         Tranformacja współrzędnych fi, lambda do układu 2000
@@ -116,7 +115,7 @@ class Transformacje:
             return(sig)
         
         def GK2000(self, f, l, a, ep2):
-            XY2000 = []
+            transformed = []
             m=0.999923
             l0 = 0 
             strefa = 0
@@ -146,15 +145,15 @@ class Transformacje:
         YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
         X2000 = XGK20 * m 
         Y2000 = YGK20 * m + strefa*1000000 + 500000
-        XY2000.append([X2000, Y2000])
-        return(X2000, Y2000)
+        transformed.append([X2000, Y2000])
+        return transformed
     
     """
     Tranformacja współrzędnych fi, lambda do układu 1992
     """
     
     def GK1992(self, f, l, a , ep2):
-        XY92 = []
+        transformed = []
         lam0 = (19*np.pi)/180
         m = 0.9993
         b2 = (a**2) * (1-ep2)   #krotsza polos
@@ -172,35 +171,87 @@ class Transformacje:
         x92 = xgk*m - 5300000
         y92 = ygk*m + 500000
         
-        XY92.append([x92, y92])
+        transformed.append([x92, y92])
         
-        return XYZ92 
-    
-"""   def plik(self, plik_wynikowy, transf: type = str):
-        dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
-        if transf == 'XYZ2BLH':
-            FLH = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
-            np.savetxt(f"plik_wynikowy_{transformacja}_{args.el}.txt", FLH, delimiter=' ', fmt='%7.10f %7.10f %7.3f')
-        elif transf == "flh2XYZ":
-            XYZ = self.flh2XYZ(np.deg2rad(dane[:,0], np.deg2rad(dane[:,1]), dane[:,2]))
-            np.savetxt(f"plik_wynikowy_{transformacja}_{args.el}.txt", XYZ, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
-        elif transf == "XYZ2NEU":
-            NEU = self.XYZ2NEU(dane[])"""
+        return transformed 
+   
+def wczytywanie_wspolrzednych(self,plik_dane, trans):
+            wsp = np.genfromtxt(plik_dane,delimiter = " ")
+            if trans == 'XYZ2flh':
+                transformed = self.XYZ2flh(wsp[:,0], wsp[:,1], wsp[:,2])
+                np.savetxt(f"twoje_wyniki_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+            elif trans == 'flh2XYZ':
+                transformed = self.flh2XYZ(np.deg2rad((wsp[:,0])), np.deg2rad(wsp[:,1]), wsp[:,2])
+                np.savetxt(f"twoje_wyniki_{trans}_{args.elip}.txt", transformed, delimiter=' ',fmt='%0.3f %0.3f %0.3f')
+            elif trans == 'XYZ2NEU':
+                transformed = self.XYZ2NEU(wsp[1:,0], wsp[1:,1], wsp[1:,2], wsp[0,0], wsp[0,1], wsp[0,2])
+                np.savetxt(f"twoje_wyniki_{trans}._{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f %0.3f')
+            elif trans == 'GK2000':
+                transformed = self.GK2000(np.deg2rad(wsp[:,0]), np.deg2rad(wsp[:,1]))
+                np.savetxt(f"twoje_wyniki_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
+            elif trans == 'GK1992':
+                transformed = self.GK1992(np.deg2rad(wsp[:,0]), np.deg2rad(wsp[:,1]))
+                np.savetxt(f"twoje_wyniki_{trans}_{args.elip}.txt", transformed, delimiter=' ',fmt='%0.3f %0.3f')
+        
 
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('-file', type=str, help='Tutaj konieczne jest podanie sciezki do pliku z danymi wejsciowymi ktore chcemy przetransformowac')
+    parser.add_argument('-elip', type=str, help='Tutaj konieczne jest podanie elipsoidy. Obslugiwane elisoidy: WGS84, GRS80 lub Krasowski')
+    parser.add_argument('-trans', type=str, help='Tutaj konieczne jest podanie transormacji. Obslugiwane transformacje: XYZ2BLH, BLH2XYZ, XYZ2NEU, BL2PL2000, BL2PL1992') 
+    args = parser.parse_args()
+    
+    el = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'KRASOWSKI':[6378245.000, 0.00669342162296]}
+    trans = {'XYZ2flh': 'XYZ2flh','flh2XYZ': 'flh2XYZ', 'GK2000':'GK2000','GK1992':'GK1992','XYZ2NEU':'XYZ2NEU'}
+ 
+    try:
+        xyz = Transformacje(el[args.elip])
+        xtytzt = xyz.wczytywanie_wspolrzednych(args.file, trans[args.trans.upper()])
+        print('Plik z twoimi przetransformowanymi wspolrzednymi zostal utworzony 😉')
+        
+    except FileNotFoundError:
+        print('Niestety podales bledny lub nieistniejacy plik')
+    except KeyError:
+        print('Zle wpisales nazwe elipsoidy lub transformacji lub podales nieobslugiwana elipsoide lub transformacje.')
+    except IndexError:
+        print('Dane w pliku wejsciowym sa blednie podane.')
+    except ValueError:
+        print('Dane w pliku wejsciowym sa blednie podane.')
+    finally:
+        print('To już wszytko. Dziękujemy za skorzystanie z naszego programu.')
+"""    
+
+def plik(self, plik_wynikowy, transf: str = ''):
+    dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
+    if transf == 'XYZ2flh':
+        transformed  = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
+        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%7.10f %7.10f %7.3f')
+    elif transf == "flh2XYZ":
+        transformed  = self.flh2XYZ(np.deg2rad(dane[:,0], np.deg2rad(dane[:,1]), dane[:,2]))
+        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
+    elif transf == "XYZ2NEU":
+        transformed  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
+        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
+    elif transf == 'GK2000':
+        transformed  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
+    elif transf == 'GK1992':
+        transformed  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')    
                                
 if __name__=='__main__':
     parser=ArgumentParser()
-    parser.add_argument("--Plik", type=str, help="Wpisz sciezke do pliku z danymi wejsciowymi")
-    parser.add_argument("--Elipsoida", type=str, help="Wybierz elipsoide sposrod dostepnych: WRS84, GRS80, KRASOWSKI")
-    parser.add_argument("--Transformacja", type=str, help="Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, saz2neu, GK2000, GK1992")
-    args=parser.parse_args()
+    parser.add_argument('-Plik', type=str, help='Wpisz sciezke do pliku z danymi wejsciowymi')
+    parser.add_argument('-Elipsoida', type=str, help='Wybierz elipsoide sposrod dostepnych: WRS84, GRS80, KRASOWSKI')
+    parser.add_argument('-Transformacja', type=str, help='Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, saz2neu, GK2000, GK1992')
+    args = parser.parse_args()
     
     Elipsoidy={"WGS84":[6378137.000, 6356752.31424518], "GRS80":[6378137.0, 6356752.31414036], "KRASOWSKI":[6378245.0, 6356752.314245]}
-    Transformacje={"XYZ2flh":"XYZ2flh", "flh2XYZ":"flh2XYZ", "saz2neu":"saz2neu", "GK2000":"GK2000", "GK1992":"GK1992"}
+    transf={"XYZ2flh":"XYZ2flh", "flh2XYZ":"flh2XYZ", "XYZ2NEU":"XYZ2NEU", "GK2000":"GK2000", "GK1992":"GK1992"}
     
     try:
-        wsp=Transformacje(Elipsoidy[args.Elipsoida.upper()])
-        wczyt=wsp.plik(args.file, Transformacje[args.Transformacja.upper()])
+        xyz = Transformacje(Elipsoidy[args.Elipsoida.upper()])
+        wczyt = xyz.plik_wynikowy(args.Plik, transf[args.transf.upper()])
         print("Utworzono plik ze wspolrzednymi")
         
     except FileNotFoundError:
@@ -212,4 +263,4 @@ if __name__=='__main__':
     except ValueError:
         print("Dane w podanym pliku sa w nieodpowiednim formacie")
     finally:
-        print("Mamy nadzieję, że nasz program był dla Ciebie użyteczny")
+        print("Mamy nadzieję, że nasz program był dla Ciebie użyteczny")"""
