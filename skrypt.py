@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 
 class Transformacje:
     def __init__(self, elip):
+        print('class', elip)
         self.a = elip[0]
         self.ep2 = elip[1]
     
@@ -26,7 +27,7 @@ class Transformacje:
     Tranformacja współrzędnych geocentrycznych XYZ na współrzędne elipsoidalne fi, lambda, h
     """
     
-    def XYZ2flh(self, X, Y, Z):
+    def XYZ2FLH(self, X, Y, Z):
         transformed = []
         
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
@@ -50,7 +51,7 @@ class Transformacje:
         """
         Transformacja współrzędnych elipsoidalnych fi, lambda, h na współrzędne XYZ
         """
-        def flh2XYZ(self,Fi,lam,h):
+        def FLH2XYZ(self,Fi,lam,h):
             transformed = []
             while True:
                 N=self.Np(Fi)
@@ -170,24 +171,26 @@ class Transformacje:
         
         return transformed 
 
-    def plik(self, pliczek, transf, elip):
+    def plik(self, pliczek, transf):
         dane = np.genfromtxt(pliczek,delimiter = ' ')
-        if transf == ['XYZ2flh']:
-            transformed  = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
-            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
-        elif transf == ['flh2XYZ']:
-            transformed  = self.flh2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
+        print('tu zapisuje')
+        if transf == 'XYZ2FLH':
+            print('tu zapisuje')
+            transformed  = self.XYZ2FLH(dane[:,0], dane[:,1], dane[:,2])
+            np.savetxt(f"dane_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+        elif transf == 'FLH2XYZ':
+            transformed  = self.FLH2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
-        elif transf == ['XYZ2NEU']:
+        elif transf == 'XYZ2NEU':
             transformed  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
-        elif transf == ['GK2000']:
+        elif transf == 'GK2000':
             transformed  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
-        elif transf == ['GK1992']:
+        elif transf == 'GK1992':
             transformed  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
-            
+
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-pliczek', type=str, help='Wpisz sciezke do pliku z danymi wejsciowymi')
@@ -195,8 +198,13 @@ if __name__ == '__main__':
     parser.add_argument('-transf', type=str, help='Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, saz2neu, GK2000, GK1992, XYZ2NEU')
     args = parser.parse_args()
     elip = {'WGS84': [6378137.000, 0.00669438002290], 'GRS80': [6378137.000, 0.00669438002290], 'KRASOWSKI': [6378245.000, 0.00669342162296]}
-    transf = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2NEU': 'XYZ2NEU', 'GK2000': 'GK2000', 'GK1992': 'GK1992'}
-
+    transf = {'XYZ2FLH': 'XYZ2FLH', 'FLH2XYZ': 'FLH2XYZ','XYZ2NEU': 'XYZ2NEU', 'GK2000': 'GK2000', 'GK1992': 'GK1992'}
+    # print(args.elip, elip[args.elip])
+    # print(elip['WGS84'][1])
+    # print(args.pliczek)
+    # wsp = Transformacje(elip[args.elip.upper()])
+    # wczyt = wsp.plik(args.pliczek, transf[args.transf.upper()])
+    
     try:
         wsp = Transformacje(elip[args.elip])
         wczyt = wsp.plik(args.pliczek, transf[args.transf.upper()])
