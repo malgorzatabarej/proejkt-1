@@ -9,7 +9,7 @@ Projekt tworzony był za pomocą programu Python w wersji 3.10.11
 Zaimprtowana została biblioteka math, numpy oraz argparse.
 ```
 
-### OPCJE PROGRAMU
+### Opcje programu:
 **Dostępne są następujące elipsoidy:**
 ```
 GRS80
@@ -26,7 +26,7 @@ BL do PL2000
 BL do PL1992
 ```
 
-### OPIS DZIAŁANIA PROGRAMU
+### Opis działania programu:
 Program wymaga podania przez użytkownika danych, przypisanych do następujących flag:
 ```
 -Plik wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
