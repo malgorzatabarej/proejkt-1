@@ -175,22 +175,22 @@ class Transformacje:
         return transformed 
    
 def plik(self, plik_wynikowy, transf: str = ''):
-    dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
-    if transf == 'XYZ2flh':
-        transformed  = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
-        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%7.10f %7.10f %7.3f')
-    elif transf == "flh2XYZ":
-        transformed  = self.flh2XYZ(np.deg2rad(dane[:,0], np.deg2rad(dane[:,1]), dane[:,2]))
-        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
-    elif transf == "XYZ2NEU":
-        transformed  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
-        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
-    elif transf == 'GK2000':
-        transformed  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
-        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
-    elif transf == 'GK1992':
-        transformed  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
-        np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')    
+            dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
+            if transf == 'XYZ2flh':
+                transformed  = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
+                np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%7.10f %7.10f %7.3f')
+            elif transf == "flh2XYZ":
+                    transformed  = self.flh2XYZ(np.deg2rad(dane[:,0], np.deg2rad(dane[:,1]), dane[:,2]))
+                    np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
+            elif transf == "XYZ2NEU":
+                transformed  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
+                np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter =' ', fmt ='%7.3f %7.3f %7.3f' )
+            elif transf == 'GK2000':
+                transformed  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+                np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
+            elif transf == 'GK1992':
+                transformed  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+                np.savetxt(f"plik_wynikowy_{transf}_{args.Elipsoida}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')    
                                
 if __name__=='__main__':
     parser=ArgumentParser()
