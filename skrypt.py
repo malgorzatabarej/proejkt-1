@@ -205,7 +205,7 @@ if __name__=='__main__':
     try:
         xyz = Transformacje(Elipsoidy[args.Elipsoida.upper()])
         wczyt = xyz.plik_wynikowy(args.Plik, transf[args.transf.upper()])
-        print("Utworzono plik ze wspolrzednymi")
+        print("Utworzono plik ze wspolrzednymi.")
         
     except FileNotFoundError:
         print("Nie znaleziono podanego pliku")
