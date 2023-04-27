@@ -1,15 +1,16 @@
+<div style="text-align: center;">
 ##                   PROJEKT 1
 #                  Transformacje
 
 Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
 
-### Wymagania do obsługi programu:
+### WYMAGANIA DO OBSŁUGI PROGRAMU:
 ```
 Projekt tworzony był za pomocą programu Python w wersji 3.10.11
 Zaimprtowana została biblioteka math, numpy oraz argparse.
 ```
 
-### Opcje programu:
+### OPCJE PROGRAMU:
 **Dostępne są następujące elipsoidy:**
 ```
 GRS80
@@ -26,7 +27,7 @@ BL do PL2000
 BL do PL1992
 ```
 
-### Opis działania programu:
+### OPIS DZIAŁANIA PROGRAMU:
 Program wymaga podania przez użytkownika danych, przypisanych do następujących flag:
 ```
 -Plik wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
