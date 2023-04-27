@@ -46,7 +46,7 @@ class Transformacje:
             h = r / cos(Fi) - N  
             transformed.append([np.rad2deg(Fi), np.rad2deg(lam), h])
         return transformed
-        
+    
 
         """
         Transformacja współrzędnych elipsoidalnych fi, lambda, h na współrzędne XYZ
@@ -175,10 +175,10 @@ class Transformacje:
         dane = np.genfromtxt(pliczek,delimiter = ' ')
         print('tu zapisuje')
         if transf == 'XYZ2FLH':
-            print('tu zapisuje')
             transformed  = self.XYZ2FLH(dane[:,0], dane[:,1], dane[:,2])
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
         elif transf == 'FLH2XYZ':
+            print('jestes tutaj')
             transformed  = self.FLH2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
         elif transf == 'XYZ2NEU':
