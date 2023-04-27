@@ -170,7 +170,23 @@ class Transformacje:
         
         return transformed 
 
-                               
+    def plik(self, pliczek, transf, elip):
+        dane = np.genfromtxt(pliczek,delimiter = ' ')
+        if transf == ['XYZ2flh']:
+            transformed  = self.XYZ2flh(dane[:,0], dane[:,1], dane[:,2])
+            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+        elif transf == ['flh2XYZ']:
+            transformed  = self.flh2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
+            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
+        elif transf == ['XYZ2NEU']:
+            transformed  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
+            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
+        elif transf == ['GK2000']:
+            transformed  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
+        elif transf == ['GK1992']:
+            transformed  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-pliczek', type=str, help='Wpisz sciezke do pliku z danymi wejsciowymi')
