@@ -1,6 +1,6 @@
-<div style="text-align: center;">
-##                   PROJEKT 1
-#                  Transformacje
+
+## PROJEKT 1
+# Transformacje
 
 Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
 
