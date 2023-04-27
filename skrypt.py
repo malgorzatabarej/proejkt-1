@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 o = object()
 
 class Transformacje:
-    def __init__(self, model):
+    def __init__(self, elip):
         if model == "WGS84":
             self.a = 6378137.000
             self.b = 6356752.31424518
@@ -30,7 +30,7 @@ class Transformacje:
     Tranformacja współrzędnych geocentrycznych XYZ na współrzędne elipsoidalne fi, lambda, h
     """
     
-    def XYZ2flh(self, X, Y, Z):
+    def XYZ2flh(self, X, Y, Z, output = "dec_degree"):
         transformed = []
         
         """Zastosowano algorytm Hirvonena, transformujący współrzędne prostokątne na współrzędne elipsoidalne. W procesie iteracyjnym, uzyskujemy dokładne wyniki"""
@@ -47,7 +47,15 @@ class Transformacje:
         N = self.a / sqrt(1 - self.ep2 * (sin(fi))**2);
         h = r / cos(fi) - N  
         transformed.append([degrees(Fi), degrees(lam), h])
-        return transformed 
+        if output == "dec_degree":
+            return transformed
+        elif output == "dms":
+            lat = self.deg2dms(degrees(lat))
+            lon = self.deg2dms(degrees(lon))
+            return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
+        else:
+            raise NotImplementedError ("nieobsługiwana elipsoida")
+    
         """
         Definicja Np
         """
@@ -61,11 +69,13 @@ class Transformacje:
         """
         def flh2XYZ(self,f,l,h):
             transformed = []
-            for fi, lam, h in zip(fi,lam,h):
+            while True:
                 N=self.Np(f)
                 X=(N+h)*np.cos(f)*np.cos(l)
                 Y=(N+h)*np.cos(f)*np.sin(l)
                 Z=(N*(1-self.ep2)+h)*np.sin(f)
+                if abs(Xp-X)<(0.000001/206265):
+                    break
                 transformed.append([X, Y, Z])
             return transformed
         
@@ -81,7 +91,7 @@ class Transformacje:
     
         def XYZ2NEU(self, X, Y, Z, X0, Y0, Z0):
             transformed = []
-            f, l, h = self.XYZ2flh(X, Y, Z, output = "degrees")
+            fi, lam, h = self.XYZ2flh(X, Y, Z, output = "degrees")
             
             Rneu = self.Rneu(f,l)
             for X, Y, Z in zip(X, Y, Z):
@@ -106,34 +116,35 @@ class Transformacje:
         def GK2000(self, f, l, a, ep2):
             transformed = []
             m=0.999923
-            for f, l in zip(f,l):
-                l0 = 0 
-                strefa = 0
-                if l >np.deg2rad(13.5) and l < np.deg2rad(16.5):
-                    strefa = 5
-                    la0 = np.deg2rad(15)
-                elif l >np.deg2rad(16.5) and l < np.deg2rad(19.5):
-                    strefa = 6
-                    l0 = np.deg2rad(18)
-                elif l >np.deg2rad(19.5) and l < np.deg2rad(22.5):
-                    strefa =7
-                    l0 = np.deg2rad(21)
-                elif l >np.deg2rad(22.5) and l < np.deg2rad(25.5):
-                    strefa = 8
-                    l0 = np.deg2rad(24)     
+            l0 = 0 
+            strefa = 0
+            if l >np.deg2rad(13.5) and l < np.deg2rad(16.5):
+                strefa = 5
+                la0 = np.deg2rad(15)
+            elif l >np.deg2rad(16.5) and l < np.deg2rad(19.5):
+                strefa = 6
+                l0 = np.deg2rad(18)
+            elif l >np.deg2rad(19.5) and l < np.deg2rad(22.5):
+                strefa =7
+                l0 = np.deg2rad(21)
+            elif l >np.deg2rad(22.5) and l < np.deg2rad(25.5):
+                strefa = 8
+                l0 = np.deg2rad(24)
+            else:
+                return("Punkt poza strefami odwzorowawczymi układu PL-2000")        
     
-            b2 = (a**2) * (1-ep2)   #krotsza polos
-            e2p = ( a**2 - b2 ) / b2   #drugi mimosrod elipsy
-            dl = l - l0
-            t = np.tan(f)
-            ni = np.sqrt(e2p * (np.cos(f))**2)
-            N = self.Np(f, a, ep2)
-            sigma = self.sigma(f, a, ep2)
-            XGK20 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
-            YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
-            X2000 = XGK20 * m 
-            Y2000 = YGK20 * m + strefa*1000000 + 500000
-            transformed.append([X2000, Y2000])
+        b2 = (a**2) * (1-ep2)   #krotsza polos
+        e2p = ( a**2 - b2 ) / b2   #drugi mimosrod elipsy
+        dl = l - l0
+        t = np.tan(f)
+        ni = np.sqrt(e2p * (np.cos(f))**2)
+        N = self.Np(f, a, ep2)
+        sigma = self.sigma(f, a, ep2)
+        XGK20 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+        YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+        X2000 = XGK20 * m 
+        Y2000 = YGK20 * m + strefa*1000000 + 500000
+        transformed.append([X2000, Y2000])
         return transformed
     
     """
@@ -144,46 +155,25 @@ class Transformacje:
         transformed = []
         lam0 = (19*np.pi)/180
         m = 0.9993
-        for f, l in zip(f,l):
-            b2 = (a**2) * (1-ep2)   #krotsza polos
-            e2p = ( a**2 - b2 ) / b2   #drugi mimosrod elipsy
-            dlam = l - lam0
-            t = np.tan(f)
-            ni = np.sqrt(e2p * (np.cos(f))**2)
-            N = self.Np(f)
+        b2 = (a**2) * (1-ep2)   #krotsza polos
+        e2p = ( a**2 - b2 ) / b2   #drugi mimosrod elipsy
+        dlam = l - lam0
+        t = np.tan(f)
+        ni = np.sqrt(e2p * (np.cos(f))**2)
+        N = self.Np(f)
 
-            sigma = self.sigma(f, a, ep2)
+        sigma = self.sigma(f, a, ep2)
 
-            xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
-            ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+        xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+        ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
         
-            x92 = xgk*m - 5300000
-            y92 = ygk*m + 500000
+        x92 = xgk*m - 5300000
+        y92 = ygk*m + 500000
         
-            transformed.append([x92, y92])
+        transformed.append([x92, y92])
         
         return transformed 
-
-
-def wczytywanie_wspolrzednych(self, plik_dane, trans, args):
-    wsp = np.genfromtxt(plik_dane, delimiter=" ")
-    if trans == 'XYZ2flh':
-        transformed = self.XYZ2flh(wsp[:, 0], wsp[:, 1], wsp[:, 2])
-        np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
-    elif trans == 'flh2XYZ':
-        transformed = self.flh2XYZ(np.deg2rad(wsp[:, 0]), np.deg2rad(wsp[:, 1]), wsp[:, 2])
-        np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f %0.3f')
-    elif trans == 'XYZ2NEU':
-        transformed = self.XYZ2NEU(wsp[1:, 0], wsp[1:, 1], wsp[1:, 2], wsp[0, 0], wsp[0, 1], wsp[0, 2])
-        np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f %0.3f')
-    elif trans == 'GK2000':
-        transformed = self.GK2000(np.deg2rad(wsp[:, 0]), np.deg2rad(wsp[:, 1]))
-        np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
-    elif trans == 'GK1992':
-        transformed = self.GK1992(np.deg2rad(wsp[:, 0]), np.deg2rad(wsp[:, 1]))
-        np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
-
-
+   
 def plik(self, plik_wynikowy, transf: str = ''):
     dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
     if transf == 'XYZ2flh':
