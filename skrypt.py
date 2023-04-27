@@ -196,7 +196,7 @@ if __name__ == '__main__':
     parser.add_argument('-transf', type=str, help='Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, saz2neu, GK2000, GK1992, XYZ2NEU')
     args = parser.parse_args()
     elip = {'WGS84': [6378137.000, 0.00669438002290], 'GRS80': [6378137.000, 0.00669438002290], 'KRASOWSKI': [6378245.000, 0.00669342162296]}
-    transf = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ', 'GK2000': 'GK2000', 'GK1992': 'GK1992', 'XYZ2NEU': 'XYZ2NEU'}
+    transf = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2NEU': 'XYZ2NEU', 'GK2000': 'GK2000', 'GK1992': 'GK1992'}
 
     try:
         wsp = Transformacje(elip[args.elip])
