@@ -176,7 +176,7 @@ class Transformacje:
         print('tu zapisuje')
         if transf == 'XYZ2FLH':
             transformed  = self.XYZ2FLH(dane[:,0], dane[:,1], dane[:,2])
-            np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+            np.savetxt(f"dane_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
         elif transf == 'FLH2XYZ':
             print('jestes tutaj')
             transformed  = self.FLH2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
