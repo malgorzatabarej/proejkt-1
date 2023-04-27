@@ -3,12 +3,13 @@
 
 Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
 
-**Program wymaga:**
+**Wymagania do obsługi programu:**
 ```
-Phyton w jakiejs wersji
-Zaimprtowania biblioteki math, numpy oraz argparse
+Projekt tworzony był za pomocą programu Python w wersji 3.10.11
+Zaimprtowana została biblioteka math, numpy oraz argparse.
 ```
 
+## OPCJE PROGRAMU
 **Dostępne są następujące elipsoidy:**
 ```
 GRS80
