@@ -3,13 +3,13 @@
 
 Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
 
-**Wymagania do obsługi programu:**
+### Wymagania do obsługi programu:
 ```
 Projekt tworzony był za pomocą programu Python w wersji 3.10.11
 Zaimprtowana została biblioteka math, numpy oraz argparse.
 ```
 
-## OPCJE PROGRAMU
+### OPCJE PROGRAMU
 **Dostępne są następujące elipsoidy:**
 ```
 GRS80
@@ -26,7 +26,7 @@ BL do PL2000
 BL do PL1992
 ```
 
-## OPIS DZIAŁANIA PROGRAMU
+### OPIS DZIAŁANIA PROGRAMU
 Program wymaga podania przez użytkownika danych, przypisanych do następujących flag:
 ```
 -Plik wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
@@ -41,9 +41,9 @@ sciezka -Plik costam -Elipsoida GRS80 -Transformacja XYZ2flh
 ```
 
 Jeżeli wszystko zostało podane prawidłowo utworzy się plik tekstowy z wynikami oraz wyswietli się  następujący komunikat:
-
-**Utworzono plik ze wspołrzędnymi.**
-
+```
+Utworzono plik ze wspołrzędnymi.
+```
 
 
 
