@@ -4,7 +4,6 @@ Created on Sun Apr 23 21:11:54 2023
 
 @author: USER
 """
-import math
 import numpy as np 
 from math import *
 from argparse import ArgumentParser
@@ -12,7 +11,7 @@ from argparse import ArgumentParser
 o = object()
 
 class Transformacje:
-    def __init__(self, elip):
+    def __init__(self, model):
         if model == "WGS84":
             self.a = 6378137.000
             self.b = 6356752.31424518
@@ -184,58 +183,6 @@ def wczytywanie_wspolrzednych(self, plik_dane, trans, args):
         transformed = self.GK1992(np.deg2rad(wsp[:, 0]), np.deg2rad(wsp[:, 1]))
         np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
 
-if __name__ == "__main__":
-    geo = Transformacje(elip = "wgs84")
-    X = 3664940.500; Y = 1409153.590; Z = 5009571.170
-    phi, lam, h = geo.XYZ2flh(X, Y, Z)
-    print(phi, lam, h)
-
-"""   
-def wczytywanie_wspolrzednych(self,plik_dane, trans):
-            wsp = np.genfromtxt(plik_dane,delimiter = " ")
-            if trans == 'XYZ2flh':
-                transformed = self.XYZ2flh(wsp[:,0], wsp[:,1], wsp[:,2])
-                np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
-            elif trans == 'flh2XYZ':
-                transformed = self.flh2XYZ(np.deg2rad((wsp[:,0])), np.deg2rad(wsp[:,1]), wsp[:,2])
-                np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ',fmt='%0.3f %0.3f %0.3f')
-            elif trans == 'XYZ2NEU':
-                transformed = self.XYZ2NEU(wsp[1:,0], wsp[1:,1], wsp[1:,2], wsp[0,0], wsp[0,1], wsp[0,2])
-                np.savetxt(f"plik_dane_{trans}._{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f %0.3f')
-            elif trans == 'GK2000':
-                transformed = self.GK2000(np.deg2rad(wsp[:,0]), np.deg2rad(wsp[:,1]))
-                np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
-            elif trans == 'GK1992':
-                transformed = self.GK1992(np.deg2rad(wsp[:,0]), np.deg2rad(wsp[:,1]))
-                np.savetxt(f"plik_dane_{trans}_{args.elip}.txt", transformed, delimiter=' ',fmt='%0.3f %0.3f')
- """       
-
-"""if __name__ == '__main__':
-    parser = ArgumentParser()
-    parser.add_argument('-file', type=str, help='Tutaj konieczne jest podanie sciezki do pliku z danymi wejsciowymi ktore chcemy przetransformowac')
-    parser.add_argument('-elip', type=str, help='Tutaj konieczne jest podanie elipsoidy. Obslugiwane elisoidy: WGS84, GRS80 lub Krasowski')
-    parser.add_argument('-trans', type=str, help='Tutaj konieczne jest podanie transormacji. Obslugiwane transformacje: XYZ2BLH, BLH2XYZ, XYZ2NEU, BL2PL2000, BL2PL1992') 
-    args = parser.parse_args()
-    
-    el = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'KRASOWSKI':[6378245.000, 0.00669342162296]}
-    trans = {'XYZ2flh': 'XYZ2flh','flh2XYZ': 'flh2XYZ', 'GK2000':'GK2000','GK1992':'GK1992','XYZ2NEU':'XYZ2NEU'}
- 
-    try:
-        xyz = Transformacje(el[args.elip])
-        xtytzt = xyz.wczytywanie_wspolrzednych(args.file, trans[args.trans.upper()])
-        print('Plik z twoimi przetransformowanymi wspolrzednymi zostal utworzony 😉')
-        
-    except FileNotFoundError:
-        print('Niestety podales bledny lub nieistniejacy plik')
-    except KeyError:
-        print('Zle wpisales nazwe elipsoidy lub transformacji lub podales nieobslugiwana elipsoide lub transformacje.')
-    except IndexError:
-        print('Dane w pliku wejsciowym sa blednie podane.')
-    except ValueError:
-        print('Dane w pliku wejsciowym sa blednie podane.')
-    finally:
-        print('To już wszytko. Dziękujemy za skorzystanie z naszego programu.')"""
-    
 
 def plik(self, plik_wynikowy, transf: str = ''):
     dane = np.genfromtxt(plik_wynikowy,delimiter = " ")
@@ -268,7 +215,7 @@ if __name__=='__main__':
     try:
         xyz = Transformacje(Elipsoidy[args.Elipsoida.upper()])
         wczyt = xyz.plik_wynikowy(args.Plik, transf[args.transf.upper()])
-        print("Utworzono plik ze wspolrzednymi")
+        print("Utworzono plik ze wspolrzednymi.")
         
     except FileNotFoundError:
         print("Nie znaleziono podanego pliku")
