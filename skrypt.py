@@ -187,6 +187,7 @@ class Transformacje:
         elif transf == ['GK1992']:
             transformed  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
             np.savetxt(f"plik_wynikowy_{transf}_{args.elip}.txt", transformed, delimiter=' ', fmt='%0.3f %0.3f')
+
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-pliczek', type=str, help='Wpisz sciezke do pliku z danymi wejsciowymi')
