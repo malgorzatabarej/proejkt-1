@@ -58,7 +58,7 @@ class Transformacje:
                 transformed.append([Xk, Yk, Zk])
         return transformed
     """Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych"""
-    def Rneu(f,l):
+    def Rneu(self,f,l):
         R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
                       [-np.sin(f)*np.sin(l), np.cos(l), np.cos(f)*np.sin(l)],
                       [np.cos(f), 0., np.sin(f)]])
