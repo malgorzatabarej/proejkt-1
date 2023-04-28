@@ -173,6 +173,7 @@ class Transformacje:
             transformed  = self.FLH2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
             np.savetxt(f"wynik_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
         elif transf == 'XYZ2NEU':
+            print('tutaj')
             transformed  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
             np.savetxt(f"wynik_{transf}_{args.elip}.txt", transformed, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
         elif transf == 'GK2000':
