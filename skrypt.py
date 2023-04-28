@@ -47,17 +47,11 @@ class Transformacje:
     def FLH2XYZ(self,Fi,lam,h):
         result = []
         for Fi, lam, h in zip(Fi, lam, h):
-            while True:
-                Fi = np.deg2rad(Fi)
-                lam = np.deg2rad(lam)
                 N=self.Np(Fi)
                 Xk=(N+h)*np.cos(Fi)*np.cos(lam)
                 Yk=(N+h)*np.cos(Fi)*np.sin(lam)
                 Zk=(N*(1-self.ep2)+h)*np.sin(Fi)
-                Xp = 0
-                if abs(Xp-Xk)<(0.000001/206265):
-                    break
-            result.append([Xk, Yk, Zk])
+                result.append([Xk, Yk, Zk])
         return result
     
     """Tranformacja współrzędnych geocentryczny do współrzędnych topocentrycznych"""
@@ -120,21 +114,18 @@ class Transformacje:
             elif l >np.deg2rad(22.5) and l < np.deg2rad(25.5):
                 strefa = 8
                 l0 = np.deg2rad(24)
-            else:
-                return("Punkt poza strefami odwzorowawczymi układu PL-2000")        
-    
-        b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
-        e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
-        dl = l - l0
-        t = np.tan(f)
-        ni = np.sqrt(e2p * (np.cos(f))**2)
-        N = self.Np(f)
-        sigma = self.sigma(f)
-        XGK20 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
-        YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
-        X2000 = XGK20 * m 
-        Y2000 = YGK20 * m + strefa*1000000 + 500000
-        result.append([X2000, Y2000])
+            b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
+            e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
+            dl = l - l0
+            t = np.tan(f)
+            ni = np.sqrt(e2p * (np.cos(f))**2)
+            N = self.Np(f)
+            sigma = self.sigma(f)
+            XGK20 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+            YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+            X2000 = XGK20 * m 
+            Y2000 = YGK20 * m + strefa*1000000 + 500000
+            result.append([X2000, Y2000])
         
         return result
     
@@ -169,19 +160,19 @@ class Transformacje:
         dane = np.genfromtxt(file,delimiter = ' ')
         if transf == 'XYZ2FLH':
             result  = self.XYZ2FLH(dane[:,0], dane[:,1], dane[:,2])
-            np.savetxt(f"C:/Users/USER/OneDrive/Pulpit/p1/result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
+            np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
         elif transf == 'FLH2XYZ':
             result  = self.FLH2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
-            np.savetxt(f"C:/Users/USER/OneDrive/Pulpit/p1/result_{transf}_{args.elip}.txt", result, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
+            np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
         elif transf == 'XYZ2NEU':
             result  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
-            np.savetxt(f"C:/Users/USER/OneDrive/Pulpit/p1/result_{transf}_{args.elip}.txt", result, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
+            np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
         elif transf == 'GK2000':
             result  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
-            np.savetxt(f"C:/Users/USER/OneDrive/Pulpit/p1/result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
+            np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
         elif transf == 'GK1992':
             result  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
-            np.savetxt(f"C:/Users/USER/OneDrive/Pulpit/p1/result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
+            np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
 
 if __name__ == '__main__':
     parser = ArgumentParser()
