@@ -2,7 +2,7 @@
 ## PROJEKT 1
 # Transformacje
 
-Dzięki temu programowi, można transformować współrzędne, w zależnosci od potrzeb użytkownika.
+Dzięki temu programowi użytkownik, możne przetransformować współrzędne w zależnosci od potrzeb.
 
 ### WYMAGANIA DO OBSŁUGI PROGRAMU:
 ```
@@ -28,23 +28,31 @@ BL do PL1992
 ```
 
 ### OPIS DZIAŁANIA PROGRAMU:
-Program wymaga podania przez użytkownika danych, przypisanych do następujących flag:
+Program wymaga podania przez użytkownika poprawnych danych, na podstawie następujących flag:
 ```
--Plik wymaga podania sciezki do pliku, z ktorego chcemy pobrac dane
--Elipsoida wymaga podania konkretnej elipsoidy
--Transformacja wymaga podania nazwy transformacji, z której użytkownik chce skorzystać
+-dane wymaga podania nazwy oraz rozszerzenia pliku, z ktorego użytkownik chce pobrac wspołrzędne
+-elip wymaga podania elipsoidy, z której uzytkownik chce skorzystac np. WGS84 (WIELKIMI LITERAMI) 
+-transf wymaga podania nazwy transformacji, z której użytkownik chce skorzystać np. XYZ2FLH
 ```
 *obsługiwane przez program transformacje oraz elipsoidy podane są powyżej*
 
+### PRZYKŁADOWE WYWOŁANIE ZA POMOCĄ WIERSZU POLECEŃ
 ```
-Przykładowe polecenie wykonane w CMD:
-sciezka -Plik costam -Elipsoida GRS80 -Transformacja XYZ2flh
+1. Otworzenie folderu, w którym znajduje się plik, za pomocą polecenia 'cd'
+np. cd C:\Users\asus\Desktop\program
+
+2. Uruchomienie programu:
+np. python skrypt.py -dane wsp.txt -elip WGS84 -transf XYZ2FLH
 ```
 
 Jeżeli wszystko zostało podane prawidłowo utworzy się plik tekstowy z wynikami oraz wyswietli się  następujący komunikat:
+
 ```
 Utworzono plik ze wspołrzędnymi.
 ```
+
+### PRZYKŁADOWE PLIKI ZE WSPÓŁRZĘDNYMI
+Do działania programu ważny jest poprawny zapis danych w pliku wejsciowym, dlatego też na początu tej strony zamieszczone zostały przez nas przykładowe pliki txt dla poszczególnych transformacji. 
 
 
 
