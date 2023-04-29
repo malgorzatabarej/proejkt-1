@@ -39,10 +39,12 @@ Program wymaga podania przez użytkownika danych, na podstawie następujących f
 ### PRZYKŁADOWE WYWOŁANIE ZA POMOCĄ WIERSZU POLECEŃ
 ```
 1. Otworzenie folderu, w którym znajduje się plik, za pomocą polecenia 'cd'
-np. cd C:\Users\asus\Desktop\program
+np. 
+cd C:\Users\asus\Desktop\program
 
 2. Uruchomienie programu:
-np. python skrypt.py -dane wsp.txt -elip WGS84 -transf XYZ2FLH
+np. 
+python skrypt.py -dane wsp.txt -elip WGS84 -transf XYZ2FLH
 ```
 
 Jeżeli wszystko zostało podane prawidłowo utworzy się plik tekstowy z wynikami oraz wyswietli się  następujący komunikat:
