@@ -23,8 +23,8 @@ KRASOWSKIEGO
 XYZ do BLH
 BLH do XYZ
 XYZ do NEU
-BL do PL2000
-BL do PL1992
+BL do GK2000
+BL do GK1992
 ```
 
 ### OPIS DZIAŁANIA PROGRAMU:
@@ -55,6 +55,17 @@ Utworzono plik ze wspołrzędnymi.
 
 ### PRZYKŁADOWE PLIKI ZE WSPÓŁRZĘDNYMI
 Do działania programu ważny jest poprawny zapis danych w pliku wejściowym, dlatego też na początu tej strony zamieszczone zostały przez nas przykładowe pliki txt dla poszczególnych transformacji. 
+**Omówienie danych wejściowych i wyjsciowych**
+
+**XYZ do BLH**
+```
+DANE WEJSCIOWE 'DANE_XYZ.txt'
+Dane rozłożone są na 3 kolumny. W pierwszej kolumnie znajdują się szerokosci geodezyjne w stopniach, w drugiej kolumnie długosc geodezyjna w stopniach, w trzeciej wysokosc punktu w metrach.
+
+DANE WYJSCIOWE 
+Dane w pliku wyjsciowym są rozłożone w ten sam sposób co w pliku wejsciowym.
+```
+
 
 
 
