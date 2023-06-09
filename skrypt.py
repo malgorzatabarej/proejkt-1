@@ -102,16 +102,16 @@ class Transformacje:
         for f, l in zip(f,l):
             l0 = 0 
             strefa = 0
-            if l >np.deg2rad(13.5) and l < np.deg2rad(16.5):
+            if l >=np.deg2rad(13.5) and l <= np.deg2rad(16.5):
                 strefa = 5
                 la0 = np.deg2rad(15)
-            elif l >np.deg2rad(16.5) and l < np.deg2rad(19.5):
+            elif l >np.deg2rad(16.5) and l <= np.deg2rad(19.5):
                 strefa = 6
                 l0 = np.deg2rad(18)
-            elif l >np.deg2rad(19.5) and l < np.deg2rad(22.5):
+            elif l >np.deg2rad(19.5) and l <= np.deg2rad(22.5):
                 strefa =7
                 l0 = np.deg2rad(21)
-            elif l >np.deg2rad(22.5) and l < np.deg2rad(25.5):
+            elif l >np.deg2rad(22.5) and l <= np.deg2rad(25.5):
                 strefa = 8
                 l0 = np.deg2rad(24)
             b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-dane', type=str, help='Wpisz nazwę oraz rozszerzenie pliku z danymi wejsciowymi')
     parser.add_argument('-elip', type=str, help='Wybierz elipsoide sposrod dostepnych: WRS84, GRS80, KRASOWSKI')
-    parser.add_argument('-transf', type=str, help='Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, saz2neu, GK2000, GK1992, XYZ2NEU')
+    parser.add_argument('-transf', type=str, help='Wybierz transformacje, z ktorej chcesz skorzystac, sposrod dostepnych: XYZ2flh, flh2XYZ, XYZ2neu, GK2000, GK1992, XYZ2NEU')
     args = parser.parse_args()
     elip = {'WGS84': [6378137.000, 0.00669438002290], 'GRS80': [6378137.000, 0.00669438002290], 'KRASOWSKI': [6378245.000, 0.00669342162296]}
     transf = {'XYZ2FLH': 'XYZ2FLH', 'FLH2XYZ': 'FLH2XYZ','XYZ2NEU': 'XYZ2NEU', 'GK2000': 'GK2000', 'GK1992': 'GK1992'}
