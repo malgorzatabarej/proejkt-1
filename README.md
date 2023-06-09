@@ -56,7 +56,7 @@ Utworzono plik ze wspołrzędnymi.
 ### PRZYKŁADOWE PLIKI ZE WSPÓŁRZĘDNYMI
 Do działania programu ważny jest poprawny zapis danych w pliku wejściowym, dlatego też na początu tej strony zamieszczone zostały przez nas przykładowe pliki txt dla poszczególnych transformacji. 
 
-###OMÓWIENIE DANYCH WEJŚCIOWYCH I WYJŚCIOWYCH
+### OMÓWIENIE DANYCH WEJŚCIOWYCH I WYJŚCIOWYCH
 
 **XYZ do FLH**
 ```
@@ -93,7 +93,7 @@ III STREFA:
 (19.5,22.5>
 IV STREFA:
 (22.5,25.5>
-Jeśli wartość długości geodezyjnej jest mniejsza niż 13,5 stopnia lub większa niż 22,5 stopnia to wynik może być poza zakresem układu PL2000. W takim przypadku wartości X i Y będą nieprawidłowe lub nieprzydatne.
+Jeśli wartość długości geodezyjnej jest mniejsza niż 13,5 stopnia lub większa niż 22,5 stopnia to wynik może być poza zakresem układu PL2000. W takim przypadku wartości X i Y będą nieprawidłowe lub nieprzydatne.*
 
 ```
 DANE WEJSCIOWE 'DANE_FL_92_20.txt'
@@ -103,7 +103,8 @@ długości geograficznej podanej w stopniach. Po transformacji użytkownik otrzy
 ```
 *WSZYSTKIE DANE MAJĄ TYP INTEGER*
 
-###ZNANE BŁĘDY PROGRAMU
+### ZNANE BŁĘDY PROGRAMU
+
 ```
 Transformacja Krasowski do PL2000 daje błędne wyniki, mimo że jest ona dostępna w programie. Nie powinna być ona stosowana przez użytkownika.
 ```
