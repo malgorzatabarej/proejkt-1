@@ -86,14 +86,19 @@ które odpowiadają współrzędnym X, Y, Z (w metrach) w układzie topocentrycz
 
 *Szczegóły transformacji BL do PL2000
 Przy tej transformacji należy wziąć po uwagę zakresy poszczególnych stref (wartości długości geodezyjnej). 
+
 I STREFA:
 <13.5,16.5>
+
 II STREFA:
 (16.5,19.5>
+
 III STREFA:
 (19.5,22.5>
+
 IV STREFA:
 (22.5,25.5>
+
 Jeśli wartość długości geodezyjnej jest mniejsza niż 13,5 stopnia lub większa niż 22,5 stopnia to wynik może być poza zakresem układu PL2000. W takim przypadku wartości X i Y będą nieprawidłowe lub nieprzydatne.*
 
 ```
