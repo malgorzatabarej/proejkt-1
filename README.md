@@ -83,8 +83,13 @@ które odpowiadają współrzędnym X, Y, Z (w metrach) w układzie topocentrycz
 ```
 
 **BL do PL2000/PL1992**
-
-*Szczegóły transformacji BL do PL2000
+```
+DANE WEJSCIOWE 'DANE_FL_92_20.txt'
+Dane wejściowe i wyjściowe dla transformacji GK2000 i GK1992
+Plik z danymi zawiera dwie kolumny, pierwsza z nich prezentuje wartości dla szerokości geograficznej podanej w stopniach, zaś druga prezentuje wartości dla 
+długości geograficznej podanej w stopniach. Po transformacji użytkownik otrzymuje plik, zawierający dwie kolumny: współrzędne X i Y podane w metrach. 
+```
+Szczegóły transformacji BL do PL2000
 Przy tej transformacji należy wziąć po uwagę zakresy poszczególnych stref (wartości długości geodezyjnej). 
 
 I STREFA:
@@ -99,15 +104,7 @@ III STREFA:
 IV STREFA:
 (22.5,25.5>
 
-Jeśli wartość długości geodezyjnej jest mniejsza niż 13,5 stopnia lub większa niż 22,5 stopnia to wynik może być poza zakresem układu PL2000. W takim przypadku wartości X i Y będą nieprawidłowe lub nieprzydatne.*
-
-```
-DANE WEJSCIOWE 'DANE_FL_92_20.txt'
-Dane wejściowe i wyjściowe dla transformacji GK2000 i GK1992
-Plik z danymi zawiera dwie kolumny, pierwsza z nich prezentuje wartości dla szerokości geograficznej podanej w stopniach, zaś druga prezentuje wartości dla 
-długości geograficznej podanej w stopniach. Po transformacji użytkownik otrzymuje plik, zawierający dwie kolumny: współrzędne X i Y podane w metrach. 
-```
-*wszystkie dane mają typ intiger*
+Jeśli wartość długości geodezyjnej jest mniejsza niż 13,5 stopnia lub większa niż 22,5 stopnia to wynik będzie poza zakresem układu PL2000. W takim przypadku wartości X i Y będą nieprawidłowe lub nieprzydatne.
 
 ### ZNANE BŁĘDY PROGRAMU
 
